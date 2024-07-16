@@ -1,23 +1,42 @@
+"use client";
 // import { pageTitleStyles } from "@/styles/common";
 import { cn } from "@/lib/utils";
 import CreateClientForm from "./create-client-form";
+import { Authenticated, useQuery } from "convex/react";
+import { api } from "../../../convex/_generated/api";
 // import { getAppClients } from "@/data-access/clients";
 
-export default async function ClientsPage() {
+export default function ClientsPage() {
   //   const clients = await getAppClients();
 
-  // console.log(clients);
+  //   const {isAuthenticeted}
+
+  const clients = useQuery(api.users.getClients, {});
+
+  console.log(clients);
   return (
     <div className="pt-5 mx-auto w-full space-y-6">
       <h1 className="text-center text-3xl font-semibold">Registered clients</h1>
 
       <CreateClientForm />
 
-      {/* {clients.map((client) => {
-        return <p key={client.id}>{client.name}</p>;
-      })} */}
-
-      <p>Clients go here</p>
+      <Authenticated>
+        <div className="flex flex-col space-y-4">
+          {clients &&
+            clients.map((client) => (
+              <div
+                key={client._id}
+                // className={cn(
+                //   "flex justify-between items-center p-4 rounded-md shadow-md"
+                // )}
+              >
+                <div>
+                  <h2 className="">{client.name}</h2>
+                </div>
+              </div>
+            ))}
+        </div>
+      </Authenticated>
     </div>
   );
 }

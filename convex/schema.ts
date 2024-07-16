@@ -10,7 +10,10 @@ export default defineSchema({
     isOrganizer: v.boolean(),
     userId: v.string(),
     // status: v.boolean()
-  }).index("by_UserId", ["userId"]),
+  })
+    .index("by_UserId", ["userId"])
+    .index("by_Role", ["role"])
+    .index("by_IsOrganizer", ["isOrganizer"]),
   events: defineTable({
     name: v.string(),
     description: v.string(),
