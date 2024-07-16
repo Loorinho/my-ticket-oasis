@@ -4,7 +4,29 @@ import { mutation, query } from "./_generated/server";
 export const getAllEvents = query({
   args: {},
   handler: async (ctx) => {
-    return await ctx.db.query("events").collect();
+    const user = await ctx.auth.getUserIdentity();
+
+    if (!user) {
+      throw new Error("Unauthenticated");
+    }
+
+    const _dbUser = await ctx.db
+      .query("users")
+      .withIndex("by_UserId", (q) => q.eq("userId", user.subject))
+      .first();
+    if (!_dbUser) {
+      throw new Error("No user with that identifier found");
+    }
+
+    const isAdmin = _dbUser.role.includes("admin");
+
+    return isAdmin
+      ? await ctx.db.query("events").collect()
+      : await ctx.db
+          .query("events")
+          .withIndex("by_Owner", (q) => q.eq("owner", _dbUser._id))
+          .collect();
+    // return await ctx.db.query("events").collect();
   },
 });
 

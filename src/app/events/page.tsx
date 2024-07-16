@@ -1,12 +1,20 @@
 "use client";
-import { useConvexAuth, useQuery } from "convex/react";
+import {
+  useConvexAuth,
+  useQuery,
+  Authenticated,
+  Unauthenticated,
+} from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { Loader2Icon } from "lucide-react";
 import CreateEventForm from "./create-event-form";
 
 export default function EventsPage() {
-  const events = useQuery(api.events.getAllEvents);
   const { isLoading, isAuthenticated } = useConvexAuth();
+  const events = useQuery(
+    api.events.getAllEvents,
+    !isAuthenticated ? "skip" : {}
+  );
 
   const currencyFormatter = new Intl.NumberFormat("en", {
     style: "currency",
@@ -19,46 +27,53 @@ export default function EventsPage() {
     day: "2-digit",
   });
 
+  // console.log(events);
+
   return (
-    <div className="mt-3 space-y-10">
-      <CreateEventForm />
+    <Authenticated>
+      <div className="mt-3 space-y-10">
+        <CreateEventForm />
 
-      {events === undefined && (
-        <div className="flex items-center justify-center w-full h-40">
-          <Loader2Icon className="my-20 size-10 animate-spin" />
-        </div>
-      )}
+        {events === undefined && (
+          <div className="flex items-center justify-center w-full h-40">
+            <Loader2Icon className="my-20 size-10 animate-spin" />
+          </div>
+        )}
 
-      {events && events.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {events.map((event) => (
-            <div key={event._id} className="bg-white shadow-md p-4 rounded-lg">
-              <h2 className="text-xl font-bold text-center">{event.name}</h2>
-              <p className="text-gray-500">{event.description}</p>
-              <p className="text-gray-500">
-                <span className="mr-2">Entrance fee: </span>
+        {events && events.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {events.map((event) => (
+              <div
+                key={event._id}
+                className="bg-white shadow-md p-4 rounded-lg"
+              >
+                <h2 className="text-xl font-bold text-center">{event.name}</h2>
+                <p className="text-gray-500">{event.description}</p>
+                <p className="text-gray-500">
+                  <span className="mr-2">Entrance fee: </span>
 
-                {currencyFormatter.format(event.fee)}
-              </p>
-              <p className="text-gray-500">
-                <span className="mr-2">Date: </span>
-                {dateFormatter.format(event.date)}
-              </p>
+                  {currencyFormatter.format(event.fee)}
+                </p>
+                <p className="text-gray-500">
+                  <span className="mr-2">Date: </span>
+                  {dateFormatter.format(event.date)}
+                </p>
 
-              <p className="text-gray-500">
-                <span className="mr-2">Location: </span>
+                <p className="text-gray-500">
+                  <span className="mr-2">Location: </span>
 
-                {event.location}
-              </p>
-              <p className="text-gray-500">
-                <span className="mr-2">Available slots: </span>
+                  {event.location}
+                </p>
+                <p className="text-gray-500">
+                  <span className="mr-2">Available slots: </span>
 
-                {event.slots}
-              </p>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
+                  {event.slots}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </Authenticated>
   );
 }

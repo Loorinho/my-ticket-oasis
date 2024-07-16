@@ -22,5 +22,5 @@ export default defineSchema({
     slots: v.number(),
     location: v.string(),
     owner: v.id("users"),
-  }),
+  }).index("by_Owner", ["owner"]),
 });
