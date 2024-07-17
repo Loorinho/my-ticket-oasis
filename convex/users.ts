@@ -19,6 +19,31 @@ export const createUser = internalMutation({
   },
 });
 
+export const getUserRole = query({
+  args: {
+    // userId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const _user = await ctx.auth.getUserIdentity();
+    if (!_user) {
+      throw new Error("Unauthenticated");
+    }
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_UserId", (q) => q.eq("userId", _user.subject))
+      .first();
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    return {
+      isAdmin: user.role.includes("toasis-admin"),
+    };
+  },
+});
+
 export const getClients = query({
   args: {},
   handler: async (ctx, args) => {

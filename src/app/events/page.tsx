@@ -8,9 +8,12 @@ import {
 import { api } from "../../../convex/_generated/api";
 import { Loader2Icon } from "lucide-react";
 import CreateEventForm from "./create-event-form";
+import EventMenu from "./events-menu";
+import { useUser } from "@clerk/clerk-react";
 
 export default function EventsPage() {
   const { isLoading, isAuthenticated } = useConvexAuth();
+  const isAdmin = useQuery(api.users.getUserRole, {});
   const events = useQuery(
     api.events.getAllEvents,
     !isAuthenticated ? "skip" : {}
@@ -45,8 +48,11 @@ export default function EventsPage() {
             {events.map((event) => (
               <div
                 key={event._id}
-                className="bg-white shadow-md p-4 rounded-lg"
+                className="bg-white shadow-md p-4 rounded-lg relative"
               >
+                {isAdmin !== undefined && isAdmin.isAdmin && (
+                  <EventMenu event={event} />
+                )}
                 <h2 className="text-xl font-bold text-center">{event.name}</h2>
                 <p className="text-gray-500">{event.description}</p>
                 <p className="text-gray-500">
