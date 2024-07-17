@@ -17,19 +17,31 @@ import { LayoutDashboard, Lightbulb, Loader2Icon, LogOut } from "lucide-react";
 import { ModeToggle } from "./mode-toggle";
 import { MenuButton } from "./menu-button";
 // import { UserId } from "@/types";
-import { Authenticated, Unauthenticated } from "convex/react";
+import {
+  Authenticated,
+  Unauthenticated,
+  useConvexAuth,
+  useQuery,
+} from "convex/react";
 import { SignInButton, SignOutButton, UserButton } from "@clerk/clerk-react";
+import { api } from "../../../../convex/_generated/api";
 
 // const profilerLoader = cache(getUserProfileUseCase);
 
 export function Header() {
   // const user = await getCurrentUser();
 
+  const { isAuthenticated } = useConvexAuth();
+
+  const isAdmin = useQuery(
+    api.users.getUserRole,
+    isAuthenticated ? {} : "skip"
+  );
+
   return (
-    <header className="border-b py-4">
+    <header className="border-b text-xl py-5">
       <div className="container mx-auto flex justify-between items-center">
         <Link href="/" className="flex gap-2 items-center text-xl">
-          {/* <Lightbulb /> */}
           <div className="hidden md:block">TicketOasis</div>
         </Link>
 
@@ -44,13 +56,18 @@ export function Header() {
           <Authenticated>
             <div className="flex gap-8 items-center">
               <div className="flex items-center gap-2">
-                <nav className="flex gap-4 items-center">
-                  <Link href={"/dashboard"}>Dashboard</Link>
+                <nav className="flex gap-4 items-center px-10">
+                  {isAdmin && isAdmin.isAdmin && (
+                    <>
+                      <Link href={"/dashboard"}>Dashboard</Link>
+                      <Link href={"/clients"}>Clients</Link>
+                    </>
+                  )}
+                  {/* <Link href={"/dashboard"}>Dashboard</Link> */}
 
-                  <Link href={"/clients"}>Clients</Link>
                   <Link href={"/events"}>Events</Link>
                 </nav>
-                <UserButton />
+                <UserButton signInUrl="/" />
 
                 {/* {user && ( */}
 

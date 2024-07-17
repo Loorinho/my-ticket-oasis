@@ -60,7 +60,7 @@ const schema = z.object({
 
 export default function EventMenu({ event }: { event: Doc<"events"> }) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [isViewDetailsOpen, setIsViewDetailsOpen] = useState(false);
+  //   const [isViewDetailsOpen, setIsViewDetailsOpen] = useState(false);
   const [rejectionDialogOpen, setRejectionDialogOpen] = useState(false);
 
   const approveOrRejectEvent = useMutation(api.events.approveOrRejectEvent);
@@ -100,9 +100,21 @@ export default function EventMenu({ event }: { event: Doc<"events"> }) {
             Approve
           </DropdownMenuItem>
 
-          {/* <DropdownMenuContent> */}
           <DropdownMenuItem
-            onClick={() => setIsViewDetailsOpen(true)}
+            onClick={async () => {
+              await approveOrRejectEvent({
+                eventId: event._id,
+                approved: false,
+              });
+
+              toast({
+                title: "Event approval",
+                description: `You have refused to approve the event`,
+                variant: "destructive",
+              });
+
+              //TODO: Add a reason for rejection
+            }}
             className="flex gap-2 items-center text-red-600 cursor-pointer hover:text-red-700"
           >
             <X className="size-4 " />
