@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
+import { asyncMap } from "./lib/relationships";
 
 export const getAllEvents = query({
   args: {},
@@ -20,12 +21,19 @@ export const getAllEvents = query({
 
     const isAdmin = _dbUser.role.includes("toasis-admin");
 
-    return isAdmin
+    const _events = isAdmin
       ? await ctx.db.query("events").collect()
       : await ctx.db
           .query("events")
           .withIndex("by_Owner", (q) => q.eq("owner", _dbUser._id))
           .collect();
+
+    return await asyncMap(_events, async (f) => {
+      return {
+        ...f,
+        image: f.image ? await ctx.storage.getUrl(f.image) : null,
+      };
+    });
     // return await ctx.db.query("events").collect();
   },
 });
@@ -38,8 +46,12 @@ export const createEvent = mutation({
     fee: v.number(),
     slots: v.number(),
     location: v.string(),
+    image: v.id("_storage"),
   },
-  handler: async (ctx, { name, description, date, fee, slots, location }) => {
+  handler: async (
+    ctx,
+    { name, description, date, fee, slots, location, image }
+  ) => {
     const user = await ctx.auth.getUserIdentity();
     if (!user) {
       throw new Error("User is unauthenticated");
@@ -60,6 +72,7 @@ export const createEvent = mutation({
       slots,
       location,
       owner: _user._id,
+      image,
     });
   },
 });
@@ -96,4 +109,8 @@ export const approveOrRejectEvent = mutation({
       approvedByAdmin: approved,
     });
   },
+});
+
+export const generateUploadUrl = mutation(async (ctx) => {
+  return await ctx.storage.generateUploadUrl();
 });

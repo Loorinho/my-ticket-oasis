@@ -1,7 +1,13 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Form } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -36,11 +42,19 @@ const eventSchema = z.object({
   fee: z.number(),
   slots: z.number(),
   location: z.string(),
+  image: z
+    .custom<FileList>(
+      (val) => val instanceof FileList,
+      "Banner image is required"
+    )
+    .refine((files) => files.length > 0, "Event image is required"),
 });
 
 export default function CreateEventForm() {
   const [sheetOpen, setSheetOpen] = useState(false);
   const [date, setDate] = useState<Date | undefined>(new Date());
+
+  const generateUploadUrl = useMutation(api.events.generateUploadUrl);
 
   const createEvent = useMutation(api.events.createEvent);
 
@@ -53,11 +67,23 @@ export default function CreateEventForm() {
       fee: 0,
       slots: 0,
       location: "",
+      image: undefined,
     },
   });
 
+  const fileRef = form.register("image");
+
   async function onSubmit(data: z.infer<typeof eventSchema>) {
     try {
+      const postUrl = await generateUploadUrl();
+
+      const postResult = await fetch(postUrl, {
+        method: "POST",
+        headers: { "Content-Type": data.image[0].type },
+        body: data.image[0],
+      });
+      const { storageId } = await postResult.json();
+
       await createEvent({
         name: data.name,
         description: data.description,
@@ -65,6 +91,7 @@ export default function CreateEventForm() {
         fee: data.fee,
         slots: data.slots,
         location: data.location,
+        image: storageId,
       });
 
       toast({
@@ -83,7 +110,7 @@ export default function CreateEventForm() {
     }
   }
 
-  // console.log(form.getValues());
+  // console.log(form.formState.errors);
 
   return (
     <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
@@ -146,6 +173,25 @@ export default function CreateEventForm() {
             <div>
               <Label htmlFor="name">Location</Label>
               <Input {...form.register("location")} />
+            </div>
+
+            <div>
+              <Label>Image</Label>
+
+              <FormField
+                control={form.control}
+                name="image"
+                render={({ field }) => {
+                  return (
+                    <FormItem>
+                      <FormControl>
+                        <Input type="file" {...fileRef} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
+              />
             </div>
 
             <Button

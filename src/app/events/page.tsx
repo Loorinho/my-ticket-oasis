@@ -6,11 +6,12 @@ import {
   Unauthenticated,
 } from "convex/react";
 import { api } from "../../../convex/_generated/api";
-import { Loader2Icon } from "lucide-react";
+import { ImageDown, Loader2Icon } from "lucide-react";
 import CreateEventForm from "./create-event-form";
 import EventMenu from "./events-menu";
 import { useUser } from "@clerk/clerk-react";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 export default function EventsPage() {
   const { isLoading, isAuthenticated } = useConvexAuth();
@@ -31,7 +32,7 @@ export default function EventsPage() {
     day: "2-digit",
   });
 
-  // console.log(events);
+  console.log(events);
 
   return (
     // <Authenticated>
@@ -49,47 +50,71 @@ export default function EventsPage() {
           {events.map((event) => (
             <div
               key={event._id}
-              className="bg-white shadow-md p-4 rounded-lg relative"
+              className="bg-white shadow-md p-4 rounded-lg relative h-[450px] w-[350px]"
             >
               {isAdmin !== undefined && isAdmin.isAdmin && (
-                <EventMenu event={event} />
+                <EventMenu event={event!} />
               )}
-              <h2 className="text-xl font-bold text-center">{event.name}</h2>
-              <p className="text-gray-500">{event.description}</p>
-              <p className="text-gray-500">
-                <span className="mr-2">Entrance fee: </span>
 
-                {currencyFormatter.format(event.fee)}
-              </p>
-              <p className="text-gray-500">
-                <span className="mr-2">Date: </span>
-                {dateFormatter.format(event.date)}
-              </p>
+              {event.image ? (
+                <Image
+                  src={event.image}
+                  alt={event.name + "'s image"}
+                  className="h-[200px] w-[340px] inset-0 object-cover"
+                  height={200}
+                  width={200}
+                />
+              ) : (
+                <ImageDown className="h-[200px] w-full" />
+                // <Image
+                //   src="/images/iplaceholder.png"
+                //   alt={event.name + "'s image"}
+                //   className="h-[200px] w-[340px]"
+                //   height={200}
+                //   width={200}
+                // />
+              )}
 
-              <p className="text-gray-500">
-                <span className="mr-2">Location: </span>
+              <div className="max-h-[250px]">
+                <h2 className="text-2xl font-bold text-center mty-2">
+                  {event.name}
+                </h2>
+                <p className="text-gray-500">{event.description}</p>
+                <p className="text-gray-500">
+                  <span className="mr-2">Entrance fee: </span>
 
-                {event.location}
-              </p>
-              <p className="text-gray-500">
-                <span className="mr-2">Available slots: </span>
+                  {currencyFormatter.format(event.fee)}
+                </p>
+                <p className="text-gray-500">
+                  <span className="mr-2">Date: </span>
+                  {dateFormatter.format(event.date)}
+                </p>
 
-                {event.slots}
-              </p>
+                <p className="text-gray-500">
+                  <span className="mr-2">Location: </span>
 
-              <p className="my-2">
-                Status:{" "}
-                <span
-                  className={cn(
-                    "px-2 py-[3px] rounded-md",
-                    event.approvedByAdmin
-                      ? "bg-green-500/80 text-white"
-                      : "bg-red-500 text-white"
-                  )}
-                >
-                  {event.approvedByAdmin ? "Approved" : "Pending"}
-                </span>
-              </p>
+                  {event.location}
+                </p>
+                <p className="text-gray-500">
+                  <span className="mr-2">Available slots: </span>
+
+                  {event.slots}
+                </p>
+
+                <p className="my-2">
+                  Status:{" "}
+                  <span
+                    className={cn(
+                      "px-2 py-[3px] rounded-md",
+                      event.approvedByAdmin
+                        ? "bg-green-500/80 text-white"
+                        : "bg-red-500 text-white"
+                    )}
+                  >
+                    {event.approvedByAdmin ? "Approved" : "Pending"}
+                  </span>
+                </p>
+              </div>
             </div>
           ))}
         </div>

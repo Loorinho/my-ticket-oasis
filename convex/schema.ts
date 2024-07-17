@@ -23,5 +23,6 @@ export default defineSchema({
     location: v.string(),
     owner: v.id("users"),
     approvedByAdmin: v.optional(v.boolean()),
+    image: v.optional(v.id("_storage")),
   }).index("by_Owner", ["owner"]),
 });
