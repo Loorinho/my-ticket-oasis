@@ -115,7 +115,10 @@ export default function CreateEventForm() {
   return (
     <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
       <SheetTrigger asChild>
-        <Button size={"sm"} className="text-white bg-green-700">
+        <Button
+          size={"sm"}
+          className="text-white bg-green-700 hover:bg-green-800"
+        >
           Create Event
         </Button>
       </SheetTrigger>
@@ -197,7 +200,7 @@ export default function CreateEventForm() {
             </div>
 
             <Button
-              className="w-full my-2 bg-green-700"
+              className="w-full my-2 bg-green-700 hover:bg-green-800"
               size={"sm"}
               type="submit"
             >

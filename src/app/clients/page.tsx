@@ -12,27 +12,14 @@ export default function ClientsPage() {
 
   return (
     <div className="pt-5 mx-auto w-full space-y-6">
-      <h1 className="text-center text-3xl font-semibold">Registered clients</h1>
+      <h1 className="text-center text-3xl text-green-700 font-semibold">
+        Registered clients
+      </h1>
 
       <CreateClientForm />
 
       <Authenticated>
         <ClientsList />
-        {/* <div className="flex flex-col space-y-4">
-          {clients &&
-            clients.map((client) => (
-              <div
-                key={client._id}
-                // className={cn(
-                //   "flex justify-between items-center p-4 rounded-md shadow-md"
-                // )}
-              >
-                <div>
-                  <h2 className="">{client.name}</h2>
-                </div>
-              </div>
-            ))}
-        </div> */}
       </Authenticated>
     </div>
   );

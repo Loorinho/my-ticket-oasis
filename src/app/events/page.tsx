@@ -38,8 +38,8 @@ export default function EventsPage() {
     <div className="mt-3 space-y-10">
       <CreateEventForm />
 
-      <h2 className="text-center text-2xl mt-4 mb-2 text-blue-700 font-medium">
-        The events page
+      <h2 className="text-center text-3xl mb-2 text-green-700 font-medium">
+        The Events Page
       </h2>
 
       {events === undefined && (

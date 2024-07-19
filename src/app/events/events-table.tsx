@@ -31,7 +31,7 @@ export default function EventsList({ events }: { events: any }) {
   });
 
   return (
-    <div className="my-5">
+    <div className="mb-5">
       {/* {events && events.length > 0 && ( */}
       <Table>
         <TableCaption>A list of all available events.</TableCaption>

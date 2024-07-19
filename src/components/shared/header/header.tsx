@@ -47,7 +47,7 @@ export function Header() {
       <div className="container mx-auto flex justify-between items-center">
         <Link href="/" className="flex gap-2 items-center text-xl">
           <div className="hidden md:block">
-            Ticket<span className="text-green-700">Oasis</span>
+            Ticket<span className="text-green-700 font-semibold">Oasis</span>
           </div>
         </Link>
 
@@ -68,7 +68,8 @@ export function Header() {
                       <Link
                         href={"/dashboard"}
                         className={cn("", {
-                          "text-green-700": pathname.includes("/dashboard"),
+                          "text-green-700 font-semibold":
+                            pathname.includes("/dashboard"),
                         })}
                       >
                         Dashboard
@@ -76,7 +77,8 @@ export function Header() {
                       <Link
                         href={"/clients"}
                         className={cn("", {
-                          "text-green-700": pathname.includes("/clients"),
+                          "text-green-700 font-semibold":
+                            pathname.includes("/clients"),
                         })}
                       >
                         Clients
@@ -88,7 +90,8 @@ export function Header() {
                   <Link
                     href={"/events"}
                     className={cn("", {
-                      "text-green-700": pathname.includes("/events"),
+                      "text-green-700 font-semibold":
+                        pathname.includes("/events"),
                     })}
                   >
                     Events
