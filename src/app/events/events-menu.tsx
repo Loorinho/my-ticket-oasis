@@ -75,7 +75,8 @@ export default function EventMenu({ event }: { event: Doc<"events"> }) {
   const router = useRouter();
 
   return (
-    <div className="absolute top-0 right-0 p-4">
+    // <div className="absolute top-0 right-0 p-4">
+    <div className="">
       <DropdownMenu>
         <DropdownMenuTrigger>
           <EllipsisVertical className="text-center ml-3" />

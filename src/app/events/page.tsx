@@ -12,6 +12,7 @@ import EventMenu from "./events-menu";
 import { useUser } from "@clerk/clerk-react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import EventsList from "./events-table";
 
 export default function EventsPage() {
   const { isLoading, isAuthenticated } = useConvexAuth();
@@ -45,16 +46,90 @@ export default function EventsPage() {
         </div>
       )}
 
-      {events && events.length > 0 && (
+      {isAdmin && isAdmin.isAdmin ? (
+        <EventsList events={events} />
+      ) : (
+        <>
+          {events && events.length > 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {events.map((event) => (
+                <div
+                  key={event._id}
+                  className="bg-white shadow-md p-4 rounded-lg relative h-[450px] w-[350px]"
+                >
+                  {isAdmin && isAdmin.isAdmin && <EventMenu event={event!} />}
+
+                  {event.image ? (
+                    <Image
+                      src={event.image}
+                      alt={event.name + "'s image"}
+                      className="h-[200px] w-[340px] inset-0 object-cover"
+                      height={200}
+                      width={200}
+                    />
+                  ) : (
+                    <ImageDown className="h-[200px] w-full" />
+                  )}
+
+                  <div className="max-h-[250px]">
+                    <h2 className="text-2xl font-bold text-center mty-2">
+                      {event.name}
+                    </h2>
+                    <p className="text-gray-500">{event.description}</p>
+                    <p className="text-gray-500">
+                      <span className="mr-2">Entrance fee: </span>
+
+                      {currencyFormatter.format(event.fee)}
+                    </p>
+                    <p className="text-gray-500">
+                      <span className="mr-2">Date: </span>
+                      {dateFormatter.format(event.date)}
+                    </p>
+
+                    <p className="text-gray-500">
+                      <span className="mr-2">Location: </span>
+
+                      {event.location}
+                    </p>
+                    <p className="text-gray-500">
+                      <span className="mr-2">Available slots: </span>
+
+                      {event.slots}
+                    </p>
+
+                    <p className="my-2">
+                      Status:{" "}
+                      <span
+                        className={cn(
+                          "px-2 py-[3px] rounded-md",
+                          event.approvedByAdmin
+                            ? "bg-green-500/80 text-white"
+                            : "bg-red-500 text-white"
+                        )}
+                      >
+                        {event.approvedByAdmin ? "Approved" : "Pending"}
+                      </span>
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </>
+      )}
+      {/* ) */}
+
+      {/* }  */}
+      {/* )} */}
+
+      {/* {events && events.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {events.map((event) => (
             <div
               key={event._id}
               className="bg-white shadow-md p-4 rounded-lg relative h-[450px] w-[350px]"
             >
-              {isAdmin !== undefined && isAdmin.isAdmin && (
-                <EventMenu event={event!} />
-              )}
+              {isAdmin && isAdmin.isAdmin && <EventMenu event={event!} />}
 
               {event.image ? (
                 <Image
@@ -66,13 +141,6 @@ export default function EventsPage() {
                 />
               ) : (
                 <ImageDown className="h-[200px] w-full" />
-                // <Image
-                //   src="/images/iplaceholder.png"
-                //   alt={event.name + "'s image"}
-                //   className="h-[200px] w-[340px]"
-                //   height={200}
-                //   width={200}
-                // />
               )}
 
               <div className="max-h-[250px]">
@@ -118,7 +186,7 @@ export default function EventsPage() {
             </div>
           ))}
         </div>
-      )}
+      )} */}
       {/* </Authenticated> */}
     </div>
   );
