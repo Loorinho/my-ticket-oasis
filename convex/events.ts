@@ -2,42 +2,6 @@ import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { asyncMap } from "./lib/relationships";
 
-export const getAllEvents = query({
-  args: {},
-  handler: async (ctx) => {
-    const user = await ctx.auth.getUserIdentity();
-
-    if (!user) {
-      throw new Error("Unauthenticated");
-    }
-
-    const _dbUser = await ctx.db
-      .query("users")
-      .withIndex("by_UserId", (q) => q.eq("userId", user.subject))
-      .first();
-    if (!_dbUser) {
-      throw new Error("No user with that identifier found");
-    }
-
-    const isAdmin = _dbUser.role.includes("toasis-admin");
-
-    const _events = isAdmin
-      ? await ctx.db.query("events").collect()
-      : await ctx.db
-          .query("events")
-          .withIndex("by_Owner", (q) => q.eq("owner", _dbUser._id))
-          .collect();
-
-    return await asyncMap(_events, async (f) => {
-      return {
-        ...f,
-        image: f.image ? await ctx.storage.getUrl(f.image) : null,
-      };
-    });
-    // return await ctx.db.query("events").collect();
-  },
-});
-
 export const createEvent = mutation({
   args: {
     name: v.string(),
@@ -74,6 +38,60 @@ export const createEvent = mutation({
       owner: _user._id,
       image,
     });
+  },
+});
+
+export const getEvent = query({
+  args: {
+    eventId: v.id("events"),
+  },
+  handler: async (ctx, { eventId }) => {
+    const _event = await ctx.db.get(eventId);
+    if (!_event) {
+      throw new Error("No event found");
+    }
+
+    return {
+      ..._event,
+      image: _event.image ? await ctx.storage.getUrl(_event.image) : null,
+      owner: await ctx.db.get(_event.owner),
+    };
+  },
+});
+
+export const getAllEvents = query({
+  args: {},
+  handler: async (ctx) => {
+    const user = await ctx.auth.getUserIdentity();
+
+    if (!user) {
+      throw new Error("Unauthenticated");
+    }
+
+    const _dbUser = await ctx.db
+      .query("users")
+      .withIndex("by_UserId", (q) => q.eq("userId", user.subject))
+      .first();
+    if (!_dbUser) {
+      throw new Error("No user with that identifier found");
+    }
+
+    const isAdmin = _dbUser.role.includes("toasis-admin");
+
+    const _events = isAdmin
+      ? await ctx.db.query("events").collect()
+      : await ctx.db
+          .query("events")
+          .withIndex("by_Owner", (q) => q.eq("owner", _dbUser._id))
+          .collect();
+
+    return await asyncMap(_events, async (f) => {
+      return {
+        ...f,
+        image: f.image ? await ctx.storage.getUrl(f.image) : null,
+      };
+    });
+    // return await ctx.db.query("events").collect();
   },
 });
 

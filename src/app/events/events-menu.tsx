@@ -34,6 +34,7 @@ import {
   CheckCircleIcon,
   EllipsisVertical,
   Eye,
+  List,
   Loader,
   PenLine,
   Replace,
@@ -53,6 +54,7 @@ import { Form } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { Doc } from "../../../convex/_generated/dataModel";
 import { api } from "../../../convex/_generated/api";
+import Link from "next/link";
 
 const schema = z.object({
   reason: z.string().min(1, "Please provide a reason"),
@@ -82,6 +84,15 @@ export default function EventMenu({ event }: { event: Doc<"events"> }) {
           <EllipsisVertical className="text-center ml-3" />
         </DropdownMenuTrigger>
         <DropdownMenuContent>
+          <DropdownMenuItem className=" text-green-600 cursor-pointer hover:text-green-700">
+            <Link
+              href={`/events/${event._id}`}
+              className="flex gap-2 items-center"
+            >
+              <List className="size-4" />
+              View details
+            </Link>
+          </DropdownMenuItem>
           <DropdownMenuItem
             // onClick={() => setIsDeleteDialogOpen(true)}
             onClick={async () => {
