@@ -9,7 +9,8 @@ export default defineSchema({
     role: v.array(v.string()),
     isOrganizer: v.boolean(),
     userId: v.string(),
-    // status: v.boolean()
+    status: v.optional(v.string()),
+    isVerified: v.optional(v.boolean()),
   })
     .index("by_UserId", ["userId"])
     .index("by_Role", ["role"])

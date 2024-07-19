@@ -115,7 +115,9 @@ export default function CreateEventForm() {
   return (
     <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
       <SheetTrigger asChild>
-        <Button size={"sm"}>Create Event</Button>
+        <Button size={"sm"} className="text-white bg-green-700">
+          Create Event
+        </Button>
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>
@@ -207,7 +209,6 @@ export default function CreateEventForm() {
               ) : (
                 <span>Create Event</span>
               )}
-              Create Event
             </Button>
           </form>
         </Form>

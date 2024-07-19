@@ -1,6 +1,7 @@
 import { auth } from "./../node_modules/convex/src/cli/auth";
 import { v } from "convex/values";
 import { internalMutation, query } from "./_generated/server";
+import { asyncMap } from "./lib/relationships";
 
 export const createUser = internalMutation({
   args: {
@@ -15,6 +16,8 @@ export const createUser = internalMutation({
       role: ["user"],
       userId: args.clerkId,
       isOrganizer: false,
+      status: "inactive",
+      isVerified: false,
     });
   },
 });
@@ -64,9 +67,22 @@ export const getClients = query({
 
     // const role: = _user.role("to-admin")
 
-    return await ctx.db
+    const clients = await ctx.db
       .query("users")
       .withIndex("by_IsOrganizer", (q) => q.eq("isOrganizer", true))
       .collect();
+
+    return await asyncMap(clients, async (f) => {
+      const eventsCreated = (
+        await ctx.db
+          .query("events")
+          .withIndex("by_Owner", (q) => q.eq("owner", f._id))
+          .collect()
+      ).length;
+      return {
+        ...f,
+        events: eventsCreated,
+      };
+    });
   },
 });

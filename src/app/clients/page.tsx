@@ -4,13 +4,10 @@ import { cn } from "@/lib/utils";
 import CreateClientForm from "./create-client-form";
 import { Authenticated, useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
+import ClientsList from "./clients-table";
 // import { getAppClients } from "@/data-access/clients";
 
 export default function ClientsPage() {
-  //   const clients = await getAppClients();
-
-  //   const {isAuthenticeted}
-
   const clients = useQuery(api.users.getClients, {});
 
   return (
@@ -20,7 +17,8 @@ export default function ClientsPage() {
       <CreateClientForm />
 
       <Authenticated>
-        <div className="flex flex-col space-y-4">
+        <ClientsList />
+        {/* <div className="flex flex-col space-y-4">
           {clients &&
             clients.map((client) => (
               <div
@@ -34,7 +32,7 @@ export default function ClientsPage() {
                 </div>
               </div>
             ))}
-        </div>
+        </div> */}
       </Authenticated>
     </div>
   );

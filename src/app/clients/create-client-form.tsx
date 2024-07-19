@@ -60,7 +60,9 @@ export default function CreateClientForm() {
   return (
     <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
       <SheetTrigger asChild>
-        <Button size={"sm"}>Create new client</Button>
+        <Button size={"sm"} className="bg-green-700 text-white">
+          Create new client
+        </Button>
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>

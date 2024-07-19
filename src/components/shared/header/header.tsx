@@ -25,11 +25,15 @@ import {
 } from "convex/react";
 import { SignInButton, SignOutButton, UserButton } from "@clerk/clerk-react";
 import { api } from "../../../../convex/_generated/api";
+import { cn } from "@/lib/utils";
+import { usePathname } from "next/navigation";
 
 // const profilerLoader = cache(getUserProfileUseCase);
 
 export function Header() {
   // const user = await getCurrentUser();
+
+  const pathname = usePathname();
 
   const { isAuthenticated } = useConvexAuth();
 
@@ -42,7 +46,9 @@ export function Header() {
     <header className="border-b text-xl py-5">
       <div className="container mx-auto flex justify-between items-center">
         <Link href="/" className="flex gap-2 items-center text-xl">
-          <div className="hidden md:block">TicketOasis</div>
+          <div className="hidden md:block">
+            Ticket<span className="text-green-700">Oasis</span>
+          </div>
         </Link>
 
         <div>
@@ -59,13 +65,34 @@ export function Header() {
                 <nav className="flex gap-4 items-center px-10">
                   {isAdmin && isAdmin.isAdmin && (
                     <>
-                      <Link href={"/dashboard"}>Dashboard</Link>
-                      <Link href={"/clients"}>Clients</Link>
+                      <Link
+                        href={"/dashboard"}
+                        className={cn("", {
+                          "text-green-700": pathname.includes("/dashboard"),
+                        })}
+                      >
+                        Dashboard
+                      </Link>
+                      <Link
+                        href={"/clients"}
+                        className={cn("", {
+                          "text-green-700": pathname.includes("/clients"),
+                        })}
+                      >
+                        Clients
+                      </Link>
                     </>
                   )}
                   {/* <Link href={"/dashboard"}>Dashboard</Link> */}
 
-                  <Link href={"/events"}>Events</Link>
+                  <Link
+                    href={"/events"}
+                    className={cn("", {
+                      "text-green-700": pathname.includes("/events"),
+                    })}
+                  >
+                    Events
+                  </Link>
                 </nav>
                 <UserButton signInUrl="/" />
 
