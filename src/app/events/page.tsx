@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 import EventsList from "./events-table";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function EventsPage() {
   const { isLoading, isAuthenticated } = useConvexAuth();
@@ -122,12 +123,17 @@ export default function EventsPage() {
                       </p>
                     )}
 
-                    <Button
-                      className="w-full bg-green-700 text-white my-2 hover:bg-green-800"
-                      size={"sm"}
+                    <Link
+                      className="block my-2"
+                      href={`/events/${event._id}/purchase`}
                     >
-                      Purchase Ticket
-                    </Button>
+                      <Button
+                        className="w-full bg-green-700 text-white  hover:bg-green-800"
+                        size={"sm"}
+                      >
+                        Purchase Ticket
+                      </Button>
+                    </Link>
                   </div>
                 </div>
               ))}

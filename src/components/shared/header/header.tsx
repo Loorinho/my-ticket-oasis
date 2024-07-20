@@ -44,10 +44,7 @@ export function Header() {
   //   return router.push("/");
   // }
 
-  const isAdmin = useQuery(
-    api.users.getUserRole,
-    isAuthenticated ? {} : "skip"
-  );
+  const role = useQuery(api.users.getUserRole, isAuthenticated ? {} : "skip");
 
   return (
     <header className="border-b text-xl py-5">
@@ -70,7 +67,7 @@ export function Header() {
             <div className="flex gap-8 items-center">
               <div className="flex items-center gap-2">
                 <nav className="flex gap-4 items-center px-10">
-                  {isAdmin && isAdmin.isAdmin ? (
+                  {role && role.isAdmin && (
                     <>
                       <Link
                         href={"/dashboard"}
@@ -91,7 +88,9 @@ export function Header() {
                         Clients
                       </Link>
                     </>
-                  ) : (
+                  )}
+
+                  {role && role.isOrganizer && (
                     <>
                       <Link
                         href={"/ticket-sales"}
