@@ -26,16 +26,23 @@ import {
 import { SignInButton, SignOutButton, UserButton } from "@clerk/clerk-react";
 import { api } from "../../../../convex/_generated/api";
 import { cn } from "@/lib/utils";
-import { usePathname } from "next/navigation";
+import { redirect, usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 // const profilerLoader = cache(getUserProfileUseCase);
 
 export function Header() {
   // const user = await getCurrentUser();
 
+  const router = useRouter();
+
   const pathname = usePathname();
 
   const { isAuthenticated } = useConvexAuth();
+
+  // if (!isAuthenticated) {
+  //   return router.push("/");
+  // }
 
   const isAdmin = useQuery(
     api.users.getUserRole,
@@ -63,7 +70,7 @@ export function Header() {
             <div className="flex gap-8 items-center">
               <div className="flex items-center gap-2">
                 <nav className="flex gap-4 items-center px-10">
-                  {isAdmin && isAdmin.isAdmin && (
+                  {isAdmin && isAdmin.isAdmin ? (
                     <>
                       <Link
                         href={"/dashboard"}
@@ -84,8 +91,19 @@ export function Header() {
                         Clients
                       </Link>
                     </>
+                  ) : (
+                    <>
+                      <Link
+                        href={"/ticket-sales"}
+                        className={cn("", {
+                          "text-green-700 font-semibold":
+                            pathname.includes("/ticket-sales"),
+                        })}
+                      >
+                        Ticket Sales
+                      </Link>
+                    </>
                   )}
-                  {/* <Link href={"/dashboard"}>Dashboard</Link> */}
 
                   <Link
                     href={"/events"}
@@ -96,6 +114,7 @@ export function Header() {
                   >
                     Events
                   </Link>
+                  {/* <Link href={"/dashboard"}>Dashboard</Link> */}
                 </nav>
                 <UserButton signInUrl="/" />
 
@@ -110,7 +129,14 @@ export function Header() {
           {/* </Suspense> */}
 
           <Unauthenticated>
-            <SignInButton />
+            <SignInButton>
+              <Button
+                size={"sm"}
+                className="bg-green-700 text-white hover:bg-green-800"
+              >
+                Sign in
+              </Button>
+            </SignInButton>
           </Unauthenticated>
 
           {/* <div className="flex items-center justify-between gap-5"></div>

@@ -78,19 +78,42 @@ export const getAllEvents = query({
 
     const isAdmin = _dbUser.role.includes("toasis-admin");
 
-    const _events = isAdmin
-      ? await ctx.db.query("events").collect()
-      : await ctx.db
-          .query("events")
-          .withIndex("by_Owner", (q) => q.eq("owner", _dbUser._id))
-          .collect();
+    const isOrganizer = _dbUser.isOrganizer;
 
-    return await asyncMap(_events, async (f) => {
+    const _theEvents = await ctx.db.query("events").collect();
+
+    const _eventsWithImages = await asyncMap(_theEvents, async (f) => {
       return {
         ...f,
         image: f.image ? await ctx.storage.getUrl(f.image) : null,
       };
     });
+
+    if (!isAdmin && !isOrganizer) {
+      return _eventsWithImages.filter((f) => f.approvedByAdmin === true);
+    } else if (isOrganizer) {
+      return _eventsWithImages.filter((f) => f.owner === _dbUser._id);
+    } else {
+      return _eventsWithImages;
+    }
+    //   const usersEvents = await ctx.db
+    //     .query("events")
+    //     .filter((q) => q.eq(q.field("approvedByAdmin"), true))
+    //     .collect();
+
+    // const _events = isAdmin
+    //   ? await ctx.db.query("events").collect()
+    //   : await ctx.db
+    //       .query("events")
+    //       .withIndex("by_Owner", (q) => q.eq("owner", _dbUser._id))
+    //       .collect();
+
+    // return await asyncMap(_events, async (f) => {
+    //   return {
+    //     ...f,
+    //     image: f.image ? await ctx.storage.getUrl(f.image) : null,
+    //   };
+    // });
     // return await ctx.db.query("events").collect();
   },
 });

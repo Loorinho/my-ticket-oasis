@@ -43,6 +43,7 @@ export const getUserRole = query({
 
     return {
       isAdmin: user.role.includes("toasis-admin"),
+      isOrganizer: user.isOrganizer,
     };
   },
 });

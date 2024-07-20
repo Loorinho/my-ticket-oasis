@@ -13,10 +13,11 @@ import { useUser } from "@clerk/clerk-react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import EventsList from "./events-table";
+import { Button } from "@/components/ui/button";
 
 export default function EventsPage() {
   const { isLoading, isAuthenticated } = useConvexAuth();
-  const isAdmin = useQuery(api.users.getUserRole, {});
+  const role = useQuery(api.users.getUserRole, {});
   const events = useQuery(
     api.events.getAllEvents,
     !isAuthenticated ? "skip" : {}
@@ -36,15 +37,15 @@ export default function EventsPage() {
   return (
     // <Authenticated>
     <div className="mt-3 space-y-10">
-      <CreateEventForm />
-
       <h2 className="text-center text-3xl mb-2 text-green-700 font-medium">
         The Events Page
       </h2>
 
+      {role && role.isOrganizer && <CreateEventForm />}
+
       {events === undefined && (
         <div className="flex items-center justify-center w-full h-40">
-          <Loader2Icon className="my-20 size-10 animate-spin" />
+          <Loader2Icon className="my-20 size-10 animate-spin text-green-700" />
         </div>
       )}
 
@@ -54,7 +55,7 @@ export default function EventsPage() {
         </div>
       )}
 
-      {events && isAdmin && isAdmin.isAdmin ? (
+      {events && role && role.isAdmin ? (
         <EventsList events={events} />
       ) : (
         <>
@@ -63,9 +64,9 @@ export default function EventsPage() {
               {events.map((event) => (
                 <div
                   key={event._id}
-                  className="bg-white shadow-md p-4 rounded-lg relative h-[450px] w-[350px]"
+                  className="bg-white shadow-md p-4 rounded-lg relative h-[450px] w-[350px] space-y-2"
                 >
-                  {isAdmin && isAdmin.isAdmin && <EventMenu event={event!} />}
+                  {role && role.isAdmin && <EventMenu event={event!} />}
 
                   {event.image ? (
                     <Image
@@ -83,7 +84,7 @@ export default function EventsPage() {
                     <h2 className="text-2xl font-bold text-center mty-2">
                       {event.name}
                     </h2>
-                    <p className="text-gray-500">{event.description}</p>
+                    {/* <p className="text-gray-500">{event.description}</p> */}
                     <p className="text-gray-500">
                       <span className="mr-2">Entrance fee: </span>
 
@@ -105,19 +106,28 @@ export default function EventsPage() {
                       {event.slots}
                     </p>
 
-                    <p className="my-2">
-                      Status:{" "}
-                      <span
-                        className={cn(
-                          "px-2 py-[3px] rounded-md",
-                          event.approvedByAdmin
-                            ? "bg-green-500/80 text-white"
-                            : "bg-red-500 text-white"
-                        )}
-                      >
-                        {event.approvedByAdmin ? "Approved" : "Pending"}
-                      </span>
-                    </p>
+                    {role && role.isOrganizer && (
+                      <p className="my-2">
+                        Status:{" "}
+                        <span
+                          className={cn(
+                            "px-2 py-[3px] rounded-md",
+                            event.approvedByAdmin
+                              ? "bg-green-500/80 text-white"
+                              : "bg-red-500 text-white"
+                          )}
+                        >
+                          {event.approvedByAdmin ? "Approved" : "Pending"}
+                        </span>
+                      </p>
+                    )}
+
+                    <Button
+                      className="w-full bg-green-700 text-white my-2 hover:bg-green-800"
+                      size={"sm"}
+                    >
+                      Purchase Ticket
+                    </Button>
                   </div>
                 </div>
               ))}
