@@ -1,5 +1,6 @@
 import { v } from "convex/values";
-import { mutation } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
+import { asyncMap } from "./lib/relationships";
 
 export const purchaseTicket = mutation({
   args: {
@@ -30,6 +31,41 @@ export const purchaseTicket = mutation({
       tickets,
       userId: _user._id,
       paymentMethod,
+    });
+  },
+});
+
+export const getUserTickets = query({
+  args: {},
+  handler: async (ctx) => {
+    const user = await ctx.auth.getUserIdentity();
+
+    if (!user) {
+      throw new Error("Unauthenticated");
+    }
+
+    const _user = await ctx.db
+      .query("users")
+      .withIndex("by_UserId", (q) => q.eq("userId", user.subject))
+      .first();
+
+    if (!_user) {
+      throw new Error("No user with that identifier exists");
+    }
+
+    const _tickets = await ctx.db
+      .query("tickets")
+      .withIndex("by_User", (q) => q.eq("userId", _user._id))
+      .collect();
+
+    return await asyncMap(_tickets, async (f) => {
+      const event = await ctx.db.get(f.eventId);
+
+      return {
+        ...f,
+        eventName: event?.name,
+        eventDate: event?.date,
+      };
     });
   },
 });
