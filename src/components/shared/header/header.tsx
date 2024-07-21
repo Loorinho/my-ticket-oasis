@@ -113,6 +113,21 @@ export function Header() {
                   >
                     Events
                   </Link>
+
+                  {role && role.isNormalUser && (
+                    <>
+                      <Link
+                        href={"/tickets"}
+                        className={cn("", {
+                          "text-green-700 font-semibold":
+                            pathname.includes("/tickets"),
+                        })}
+                      >
+                        Tickets
+                      </Link>
+                    </>
+                  )}
+
                   {/* <Link href={"/dashboard"}>Dashboard</Link> */}
                 </nav>
                 <UserButton signInUrl="/" />
