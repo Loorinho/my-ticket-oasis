@@ -21,6 +21,7 @@ export default defineSchema({
     date: v.number(),
     fee: v.number(),
     slots: v.number(),
+    purchasedTickets: v.number(),
     location: v.string(),
     type: v.optional(v.string()),
     owner: v.id("users"),

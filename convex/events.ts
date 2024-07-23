@@ -37,6 +37,7 @@ export const createEvent = mutation({
       location,
       owner: _user._id,
       image,
+      purchasedTickets: 0,
     });
   },
 });

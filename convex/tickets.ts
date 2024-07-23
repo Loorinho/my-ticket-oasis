@@ -25,13 +25,26 @@ export const purchaseTicket = mutation({
     if (!_user) {
       throw new Error("No user with that identifier exists");
     }
-    await ctx.db.insert("tickets", {
+    const result = await ctx.db.insert("tickets", {
       eventId,
       price,
       tickets,
       userId: _user._id,
       paymentMethod,
     });
+
+    const event = await ctx.db.get(eventId);
+
+    if (!event) {
+      throw new Error("No event with that ID exists");
+    }
+
+    await ctx.db.patch(eventId, {
+      slots: event.slots - tickets,
+      purchasedTickets: event.purchasedTickets + tickets,
+    });
+
+    return result;
   },
 });
 
