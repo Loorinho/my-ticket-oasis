@@ -22,6 +22,7 @@ export default defineSchema({
     fee: v.number(),
     slots: v.number(),
     location: v.string(),
+    type: v.optional(v.string()),
     owner: v.id("users"),
     approvedByAdmin: v.optional(v.boolean()),
     image: v.optional(v.id("_storage")),

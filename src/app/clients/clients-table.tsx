@@ -35,11 +35,6 @@ export default function ClientsList() {
 
   return (
     <div className="my-5">
-      {clients === undefined && (
-        <div className="flex items-center justify-center w-full h-40">
-          <Loader2Icon className="my-20 size-10 animate-spin text-green-700" />
-        </div>
-      )}
       {clients && clients.length > 0 && (
         <Table>
           <TableCaption>A list of all registered clients.</TableCaption>

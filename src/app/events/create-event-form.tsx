@@ -28,11 +28,18 @@ import { toast } from "@/components/ui/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "convex/react";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import { api } from "../../../convex/_generated/api";
 // import { LoaderButton } from "@/components/loader-button";
 import { Loader2Icon } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 // import { Calendar } from "@/components/ui/calendar";
 
 const eventSchema = z.object({
@@ -40,6 +47,17 @@ const eventSchema = z.object({
   description: z.string(),
   date: z.string(),
   fee: z.number(),
+  type: z.enum(
+    [
+      "Galas and Dinners",
+      "Music Concert",
+      "Training Seminars or Workshops",
+      "Festivals/Carnivals",
+    ],
+    {
+      required_error: "You need to select an event category.",
+    }
+  ),
   slots: z.number(),
   location: z.string(),
   image: z
@@ -132,6 +150,42 @@ export default function CreateEventForm() {
             <div>
               <Label htmlFor="name">Event Name</Label>
               <Input {...form.register("name")} />
+            </div>
+
+            <div>
+              <Label htmlFor="Event type">Event type</Label>
+              <Controller
+                control={form.control}
+                name="type"
+                render={({ field }) => (
+                  <Select onValueChange={field.onChange}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select the event type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Galas and Dinners">
+                        Galas and Dinners
+                      </SelectItem>
+                      <SelectItem value="Music Concert">
+                        Music Concert
+                      </SelectItem>
+                      <SelectItem value="Training Seminars or Workshops">
+                        Training Seminars or Workshops
+                      </SelectItem>
+                      <SelectItem value="Festivals/Carnivals">
+                        Festivals/Carnivals
+                      </SelectItem>
+                      <SelectItem value="Charity">Charity</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+
+              {form.formState.errors.type && (
+                <span className="text-red-600 text-xs">
+                  {form.formState.errors.type.message}
+                </span>
+              )}
             </div>
 
             <div>

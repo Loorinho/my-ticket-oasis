@@ -65,7 +65,7 @@ export default function EventsPage() {
               {events.map((event) => (
                 <div
                   key={event._id}
-                  className="bg-white shadow-md p-4 rounded-lg relative h-[450px] w-[350px] space-y-2"
+                  className="bg-white shadow-md p-4 rounded-lg relative h-[450px] w-[400px] space-y-2"
                 >
                   {role && role.isAdmin && <EventMenu event={event!} />}
 
@@ -73,7 +73,7 @@ export default function EventsPage() {
                     <Image
                       src={event.image}
                       alt={event.name + "'s image"}
-                      className="h-[200px] w-[340px] inset-0 object-cover"
+                      className="h-[200px] w-[400px] inset-0 object-cover"
                       height={200}
                       width={200}
                     />
