@@ -26,27 +26,13 @@ import {
 import { SignInButton, SignOutButton, UserButton } from "@clerk/clerk-react";
 import { api } from "../../../../convex/_generated/api";
 import { cn } from "@/lib/utils";
-import { redirect, usePathname } from "next/navigation";
-import { useRouter } from "next/navigation";
-
-// const profilerLoader = cache(getUserProfileUseCase);
+import { usePathname } from "next/navigation";
 
 export function Header() {
-  // const user = await getCurrentUser();
-
-  const router = useRouter();
-
   const pathname = usePathname();
 
   const { isAuthenticated } = useConvexAuth();
-
-  // if (!isAuthenticated) {
-  //   return router.push("/");
-  // }
-
   const role = useQuery(api.users.getUserRole, isAuthenticated ? {} : "skip");
-
-  console.log("Inside header");
 
   return (
     <header className="border-b text-xl py-5">
@@ -72,19 +58,19 @@ export function Header() {
                   {role && role.isAdmin && (
                     <>
                       <Link
-                        href={"/dashboard"}
+                        href={"/to/dashboard"}
                         className={cn("", {
                           "text-green-700 font-semibold":
-                            pathname.includes("/dashboard"),
+                            pathname.includes("/to/dashboard"),
                         })}
                       >
                         Dashboard
                       </Link>
                       <Link
-                        href={"/clients"}
+                        href={"/to/clients"}
                         className={cn("", {
                           "text-green-700 font-semibold":
-                            pathname.includes("/clients"),
+                            pathname.includes("/to/clients"),
                         })}
                       >
                         Clients
@@ -95,10 +81,10 @@ export function Header() {
                   {role && role.isOrganizer && (
                     <>
                       <Link
-                        href={"/ticket-sales"}
+                        href={"/to/ticket-sales"}
                         className={cn("", {
                           "text-green-700 font-semibold":
-                            pathname.includes("/ticket-sales"),
+                            pathname.includes("/to/ticket-sales"),
                         })}
                       >
                         Ticket Sales
@@ -107,10 +93,10 @@ export function Header() {
                   )}
 
                   <Link
-                    href={"/events"}
+                    href={"/to/events"}
                     className={cn("", {
                       "text-green-700 font-semibold":
-                        pathname.includes("/events"),
+                        pathname.includes("/to/events"),
                     })}
                   >
                     Events
@@ -119,10 +105,10 @@ export function Header() {
                   {role && role.isNormalUser && (
                     <>
                       <Link
-                        href={"/tickets"}
+                        href={"/to/tickets"}
                         className={cn("", {
                           "text-green-700 font-semibold":
-                            pathname.includes("/tickets"),
+                            pathname.includes("/to/tickets"),
                         })}
                       >
                         Tickets

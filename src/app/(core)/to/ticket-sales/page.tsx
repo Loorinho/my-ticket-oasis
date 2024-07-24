@@ -1,9 +1,14 @@
+// "use client"
 import { useConvexAuth } from "convex/react";
+import TicketSalesTable from "./ticket-sales-table";
 
 export default function TicketSalesPage() {
   return (
     <div>
-      <h1>Ticket Sales</h1>
+      <h1 className="text-center font-semibold text-green-700 text-2xl">
+        Ticket Sales
+      </h1>
+      <TicketSalesTable />
     </div>
   );
 }
