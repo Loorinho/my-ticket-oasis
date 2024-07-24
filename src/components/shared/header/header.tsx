@@ -46,6 +46,8 @@ export function Header() {
 
   const role = useQuery(api.users.getUserRole, isAuthenticated ? {} : "skip");
 
+  console.log("Inside header");
+
   return (
     <header className="border-b text-xl py-5">
       <div className="container mx-auto flex justify-between items-center">
@@ -130,7 +132,7 @@ export function Header() {
 
                   {/* <Link href={"/dashboard"}>Dashboard</Link> */}
                 </nav>
-                <UserButton signInUrl="/" />
+                <UserButton signInUrl="/auth/sign-in" />
 
                 {/* {user && ( */}
 
