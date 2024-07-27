@@ -6,6 +6,7 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -32,7 +33,7 @@ import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import { api } from "../../../../../convex/_generated/api";
 // import { LoaderButton } from "@/components/loader-button";
-import { Loader2Icon } from "lucide-react";
+import { Calendar, CalendarIcon, Loader2Icon } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -40,12 +41,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
+import {
+  DateTimePicker,
+  TimePicker,
+  TimePickerInput,
+} from "@/components/ui/date-time-picker";
 // import { Calendar } from "@/components/ui/calendar";
 
 const eventSchema = z.object({
   name: z.string(),
   description: z.string(),
-  date: z.string(),
+  // date: z.string(),
+  // newEventDate: z.date(),
   fee: z.number(),
   type: z.enum(
     [
@@ -70,7 +79,9 @@ const eventSchema = z.object({
 
 export default function CreateEventForm() {
   const [sheetOpen, setSheetOpen] = useState(false);
-  const [date, setDate] = useState<Date | undefined>(new Date());
+
+  const [date, setDate] = useState<Date | undefined>(undefined);
+  const [time, setTime] = useState<Date | undefined>(undefined);
 
   const generateUploadUrl = useMutation(api.events.generateUploadUrl);
 
@@ -81,7 +92,6 @@ export default function CreateEventForm() {
     defaultValues: {
       name: "",
       description: "",
-      date: date!!.toLocaleDateString(),
       fee: 0,
       slots: 0,
       location: "",
@@ -94,29 +104,25 @@ export default function CreateEventForm() {
   async function onSubmit(data: z.infer<typeof eventSchema>) {
     try {
       const postUrl = await generateUploadUrl();
-
       const postResult = await fetch(postUrl, {
         method: "POST",
         headers: { "Content-Type": data.image[0].type },
         body: data.image[0],
       });
       const { storageId } = await postResult.json();
-
       await createEvent({
         name: data.name,
         description: data.description,
-        date: Date.parse(data.date),
+        date: Date.parse(date?.toLocaleDateString() ?? ""),
         fee: data.fee,
         slots: data.slots,
         location: data.location,
         image: storageId,
       });
-
       toast({
         title: "Success",
         description: `Event added successfully`,
       });
-
       form.reset();
       setSheetOpen(false);
     } catch (error) {
@@ -127,8 +133,6 @@ export default function CreateEventForm() {
       });
     }
   }
-
-  // console.log(form.formState.errors);
 
   return (
     <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
@@ -193,23 +197,19 @@ export default function CreateEventForm() {
               <Textarea {...form.register("description")} />
             </div>
 
-            <div>
-              <Label htmlFor="name">Event Date</Label>
-              {/* <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="outline">Choose a date</Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-80">
-                  <Calendar
-                    mode="single"
-                    selected={date}
-                    onSelect={setDate}
-                    className="rounded-md border"
-                  />
-                </PopoverContent>
-              </Popover> */}
-
-              <Input {...form.register("date")} type="date" />
+            <div className="flex flex-col gap-3 w-full">
+              <div className="w-full">
+                <Label htmlFor="Event date">Date Picker</Label>
+                <DateTimePicker
+                  granularity="day"
+                  value={date}
+                  onChange={setDate}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="Gates open">Gates Open</Label>
+                <TimePicker date={time} onChange={setTime} />
+              </div>
             </div>
 
             <div className="grid grid-cols-2 gap-3">

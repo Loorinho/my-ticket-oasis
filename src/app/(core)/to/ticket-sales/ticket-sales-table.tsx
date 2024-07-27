@@ -45,7 +45,7 @@ export default function TicketSalesTable() {
 
       {events && events.length === 0 && (
         <div className="text-center">
-          <h2 className="font-semibold text-2xl">No events found</h2>
+          <h2 className="font-semibold text-2xl">No event sales found</h2>
         </div>
       )}
 
@@ -55,19 +55,16 @@ export default function TicketSalesTable() {
           <TableHeader>
             <TableRow>
               <TableHead className="w-[100px]">#</TableHead>
-              <TableHead>Title</TableHead>
+              <TableHead>Event Name</TableHead>
               <TableHead>Event Date</TableHead>
 
-              <TableHead>Entance fee</TableHead>
+              <TableHead>Ticket Price</TableHead>
 
               <TableHead className="text-center">Available Tickets</TableHead>
               <TableHead className="text-center">Sold Tickets</TableHead>
               <TableHead className="text-left">Collected</TableHead>
 
-              {/* <TableHead className="text-center">Status</TableHead> */}
-
               <TableHead className="">Created on</TableHead>
-              {/* <TableHead className="">Actions</TableHead> */}
             </TableRow>
           </TableHeader>
           <TableBody>

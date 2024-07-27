@@ -11,6 +11,7 @@ export const createEvent = mutation({
     slots: v.number(),
     location: v.string(),
     image: v.id("_storage"),
+    // newEventDate: v.optional(v.string()),
   },
   handler: async (
     ctx,
@@ -38,6 +39,7 @@ export const createEvent = mutation({
       owner: _user._id,
       image,
       purchasedTickets: 0,
+      // newEventDate: newEventDate,/
     });
   },
 });

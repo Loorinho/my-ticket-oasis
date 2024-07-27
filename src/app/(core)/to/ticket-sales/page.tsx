@@ -1,5 +1,4 @@
-// "use client"
-import { useConvexAuth } from "convex/react";
+"use client";
 import TicketSalesTable from "./ticket-sales-table";
 
 export default function TicketSalesPage() {
